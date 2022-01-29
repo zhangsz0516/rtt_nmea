@@ -1,7 +1,7 @@
 #include <rtthread.h>
 #include <stdio.h>
 
-#define USING_NMEA_LIB
+//#define USING_NMEA_LIB
 
 #ifdef USING_NMEA_LIB
 
