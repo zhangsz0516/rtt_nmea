@@ -1,13 +1,42 @@
 #include <rtthread.h>
 #include <stdio.h>
 
-//#define USING_NMEA_LIB
+#define DBG_BUFF_MAX_LEN          256
+
+/* debug print */
+int dbg_printf(const char *fmt, ...)
+{
+    va_list args;
+    static char rt_log_buf[DBG_BUFF_MAX_LEN] = { 0 };
+
+    va_start(args, fmt);
+    int length = vsnprintf(rt_log_buf, sizeof(rt_log_buf) - 1, fmt, args);
+
+    rt_kputs(rt_log_buf);
+
+    return length;
+}
+
+#define USING_NMEA_LIB
 
 #ifdef USING_NMEA_LIB
 
 #include <nmea_parse.h>
+const char *rmc_buf = "$GPRMC,031024.000,A,3115.6422,N,12127.5490,E,0.58,98.86,180918,,,A*5A\r\n";
 
-#define DBG_BUFF_MAX_LEN          256
+void nmea_parse_test_rmc(void)
+{
+    nmea_rmc_t pack = { 0 };
+
+    nmea_parse_rmc(rmc_buf, rt_strlen(rmc_buf), &pack);
+    dbg_printf("RMC : Latitude: %lf[%c], Longitude: %lf[%c], Fix: %c\n", pack.lat, pack.ns,
+        pack.lon, pack.ew, pack.status);
+}
+MSH_CMD_EXPORT(nmea_parse_test_rmc, nmea_parse_test_rmc);
+
+#else
+
+#include <nmea_parse.h>
 
 const char *buff[] =
 {
@@ -22,22 +51,6 @@ const char *buff[] =
 };
 
 const char *buff2 = "$GPRMC,031024.000,A,3115.6422,N,12127.5490,E,0.58,98.86,180918,,,A*5A\r\n";
-
-/**
- * \brief Formating string (like standart printf) with CRC tail (*CRC)
- */
-int dbg_printf(const char *fmt, ...)
-{
-    va_list args;
-    static char rt_log_buf[DBG_BUFF_MAX_LEN] = { 0 };
-
-    va_start(args, fmt);
-    int length = vsnprintf(rt_log_buf, sizeof(rt_log_buf) - 1, fmt, args);
-
-    rt_kputs(rt_log_buf);
-
-    return length;
-}
 
 void nmea_parse_test_01(void)
 {
