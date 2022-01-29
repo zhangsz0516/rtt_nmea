@@ -1,5 +1,12 @@
 #include <rtthread.h>
-#include <nmea/nmea.h>
+
+#define USING_NMEA_LIB
+
+#ifdef USING_NMEA_LIB
+
+#include <nmea_parse.h>
+
+#define DBG_BUFF_MAX_LEN          256
 
 const char *buff[] =
 {
@@ -15,41 +22,51 @@ const char *buff[] =
 
 const char *buff2 = "$GPRMC,031024.000,A,3115.6422,N,12127.5490,E,0.58,98.86,180918,,,A*5A\r\n";
 
+/**
+ * \brief Formating string (like standart printf) with CRC tail (*CRC)
+ */
+int dbg_printf(const char *fmt, ...)
+{
+    va_list args;
+    static char rt_log_buf[DBG_BUFF_MAX_LEN] = { 0 };
+
+    va_start(args, fmt);
+    int length = vsnprintf(rt_log_buf, sizeof(rt_log_buf) - 1, fmt, args);
+
+    rt_kputs(rt_log_buf);
+}
+
 void nmea_parse_test_01(void)
 {
     int it;
     nmeaINFO info = { 0 };
     nmeaPARSER parser;
-    nmeaPOS dpos;
+
     double x = 3333333333.444444444444444;
 
-    rt_kprintf("%s : x=%lf\r\n", __func__, x);
-    nmea_zero_INFO(&info);
+    dbg_printf("%s : x=%lf\r\n", __func__, x);
     nmea_parser_init(&parser);
 
-#if 0
+#if 1
     for (it = 0; it < 8; ++it)
     {
         nmea_parse(&parser, buff[it], (int)rt_strlen(buff[it]), &info);
 
-        nmea_info2pos(&info, &dpos);
-        rt_kprintf("%03d, Lat: %lf, Lon: %lf, Sig: %d, Fix: %d\n", it, dpos.lat,
-            dpos.lon, info.sig, info.fix);
+        dbg_printf("RMC : Lat: %lf, Lon: %lf, Sig: %d, Fix: %d\n", info.lat,
+            info.lon, info.sig, info.fix);
     }
 #endif
-    int len = strlen(buff2);
-    rt_kprintf("buffer len = %d\n", len);
-    nmea_parse(&parser, buff2, (int)strlen(buff2), &info);
+    int len = rt_strlen(buff2);
+    dbg_printf("buffer len = %d\n", len);
+    nmea_parse(&parser, buff2, (int)rt_strlen(buff2), &info);
 
-    rt_kprintf("RMC : Lat: %lf, Lon: %lf, Sig: %d, Fix: %d\n", info.lat,
+    dbg_printf("RMC : Lat: %lf, Lon: %lf, Sig: %d, Fix: %d\n", info.lat,
         info.lon, info.sig, info.fix);
-
-    nmea_info2pos(&info, &dpos);
-    rt_kprintf("RMC : Lat: %lf, Lon: %lf, Sig: %d, Fix: %d\n", dpos.lat,
-        dpos.lon, info.sig, info.fix);
 
     nmea_parser_destroy(&parser);
 }
 
 MSH_CMD_EXPORT(nmea_parse_test_01, nmea_parse_test_01);
+
+#endif
 
