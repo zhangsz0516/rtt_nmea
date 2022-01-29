@@ -59,6 +59,7 @@
 #include "nmea/context.h"
 #include "nmea/gmath.h"
 #include "nmea/units.h"
+#include "nmea/nmea_time.h"
 
 #include <string.h>
 #include <stdio.h>
