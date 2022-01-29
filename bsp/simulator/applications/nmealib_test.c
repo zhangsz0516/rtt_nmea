@@ -41,6 +41,9 @@ void nmea_parse_test_01(void)
     rt_kprintf("buffer len = %d\n", len);
     nmea_parse(&parser, buff2, (int)strlen(buff2), &info);
 
+    rt_kprintf("RMC : Lat: %lf, Lon: %lf, Sig: %d, Fix: %d\n", info.lat,
+        info.lon, info.sig, info.fix);
+
     nmea_info2pos(&info, &dpos);
     rt_kprintf("RMC : Lat: %lf, Lon: %lf, Sig: %d, Fix: %d\n", dpos.lat,
         dpos.lon, info.sig, info.fix);

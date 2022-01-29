@@ -27,7 +27,6 @@ typedef struct _nmeaParserNODE
     int packType;
     void *pack;
     struct _nmeaParserNODE *next_node;
-
 } nmeaParserNODE;
 
 /*
@@ -50,8 +49,11 @@ int nmea_parser_init(nmeaPARSER *parser)
 
     memset(parser, 0, sizeof(nmeaPARSER));
 
-    if(0 == (parser->buffer = rt_malloc(buff_size)))
+    if (0 == (parser->buffer = rt_malloc(buff_size)))
+    {
         nmea_error("Insufficient memory!");
+        resv = -1;
+    }
     else
     {
         parser->buff_size = buff_size;
@@ -76,7 +78,7 @@ void nmea_parser_destroy(nmeaPARSER *parser)
  * \brief Analysis of buffer and put results to information structure
  * @return Number of packets wos parsed
  */
-int nmea_parse(    
+int nmea_parse(
     nmeaPARSER *parser,
     const char *buff, int buff_sz,
     nmeaINFO *info
