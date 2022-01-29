@@ -42,7 +42,7 @@ int dbg_printf(const char *fmt, ...)
 void nmea_parse_test_01(void)
 {
     int it;
-    nmeaINFO info = { 0 };
+    nmea_info_t info = { 0 };
     nmeaPARSER parser;
 
     double x = 3333333333.444444444444444;

@@ -44,7 +44,7 @@ typedef struct _nmeaTIME
     int min; /**< Minutes after the hour - [0,59] */
     int sec; /**< Seconds after the minute - [0,59] */
     int hsec; /**< Hundredth part of second - [0,99] */
-} nmeaTIME;
+} nmea_time_t;
 
 /**
  * Information about satellite
@@ -58,18 +58,18 @@ typedef struct _nmeaSATELLITE
     int     elv;        /**< Elevation in degrees, 90 maximum */
     int     azimuth;    /**< Azimuth, degrees from true north, 000 to 359 */
     int     sig;        /**< Signal, 00-99 dB */
-} nmeaSATELLITE;
+} nmea_satellite_t;
 
 /**
  * Information about all satellites in view
- * @see nmeaINFO
+ * @see nmea_info_t
  * @see nmeaGPGSV
  */
 typedef struct _nmeaSATINFO
 {
     int     inuse; /**< Number of satellites in use (not those in view) */
     int     inview; /**< Total number of satellites in view */
-    nmeaSATELLITE sat[NMEA_MAXSAT]; /**< Satellites information */
+    nmea_satellite_t sat[NMEA_MAXSAT]; /**< Satellites information */
 } nmeaSATINFO;
 
 /**
@@ -82,7 +82,7 @@ typedef struct _nmeaINFO
 {
     int     smask; /**< Mask specifying types of packages from which data have been obtained */
 
-    nmeaTIME utc; /**< UTC of position */
+    nmea_time_t utc; /**< UTC of position */
 
     int     sig; /**< GPS quality indicator (0 = Invalid; 1 = Fix; 2 = Differential, 3 = Sensitive) */
     int     fix; /**< Operating mode, used for navigation (1 = Fix not available; 2 = 2D; 3 = 3D) */
@@ -99,7 +99,7 @@ typedef struct _nmeaINFO
     double  declination; /**< Magnetic variation degrees (Easterly var. subtracts from true course) */
 
     nmeaSATINFO satinfo; /**< Satellites information */
-} nmeaINFO;
+} nmea_info_t;
 
 typedef struct _nmeaPARSER
 {
@@ -128,7 +128,7 @@ enum nmeaPACKTYPE
  */
 typedef struct _nmeaGPGGA
 {
-    nmeaTIME utc;       /**< UTC of position (just time) */
+    nmea_time_t utc;       /**< UTC of position (just time) */
     double  lat;        /**< Latitude in NDEG - [degree][min].[sec/60] */
     char    ns;         /**< [N]orth or [S]outh */
     double  lon;        /**< Longitude in NDEG - [degree][min].[sec/60] */
@@ -165,7 +165,7 @@ typedef struct _nmeaGPGSV
     int     pack_count; /**< Total number of messages of this type in this cycle */
     int     pack_index; /**< Message number */
     int     sat_count;  /**< Total number of satellites in view */
-    nmeaSATELLITE sat_data[NMEA_SATINPACK];
+    nmea_satellite_t sat_data[NMEA_SATINPACK];
 } nmeaGPGSV;
 
 /**
@@ -173,7 +173,7 @@ typedef struct _nmeaGPGSV
  */
 typedef struct _nmeaGPRMC
 {
-    nmeaTIME utc;       /**< UTC of position */
+    nmea_time_t utc;       /**< UTC of position */
     char    status;     /**< Status (A = active or V = void) */
     double  lat;        /**< Latitude in NDEG - [degree][min].[sec/60] */
     char    ns;         /**< [N]orth or [S]outh */
@@ -210,7 +210,7 @@ void    nmea_parser_destroy(nmeaPARSER *parser);
 int     nmea_parse(
     nmeaPARSER *parser,
     const char *buff, int buff_sz,
-    nmeaINFO *info
+    nmea_info_t *info
 );
 
 #ifdef  __cplusplus

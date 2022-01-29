@@ -61,7 +61,7 @@ void nmea_parser_destroy(nmeaPARSER *parser)
     rt_memset(parser, 0, sizeof(nmeaPARSER));
 }
 
-int _nmea_parse_time(const char *buff, int buff_sz, nmeaTIME *res)
+int _nmea_parse_time(const char *buff, int buff_sz, nmea_time_t *res)
 {
     int success = 0;
 
@@ -356,11 +356,11 @@ int nmea_parse_GPVTG(const char *buff, int buff_sz, nmeaGPVTG *pack)
 }
 
 /**
- * \brief Fill nmeaINFO structure by GGA packet data.
+ * \brief Fill nmea_info_t structure by GGA packet data.
  * @param pack a pointer of packet structure.
  * @param info a pointer of summary information structure.
  */
-void nmea_GPGGA2info(nmeaGPGGA *pack, nmeaINFO *info)
+void nmea_GPGGA2info(nmeaGPGGA *pack, nmea_info_t *info)
 {
     NMEA_ASSERT(pack && info);
 
@@ -377,11 +377,11 @@ void nmea_GPGGA2info(nmeaGPGGA *pack, nmeaINFO *info)
 }
 
 /**
- * \brief Fill nmeaINFO structure by GSA packet data.
+ * \brief Fill nmea_info_t structure by GSA packet data.
  * @param pack a pointer of packet structure.
  * @param info a pointer of summary information structure.
  */
-void nmea_GPGSA2info(nmeaGPGSA *pack, nmeaINFO *info)
+void nmea_GPGSA2info(nmeaGPGSA *pack, nmea_info_t *info)
 {
     int i, j, nuse = 0;
 
@@ -409,11 +409,11 @@ void nmea_GPGSA2info(nmeaGPGSA *pack, nmeaINFO *info)
 }
 
 /**
- * \brief Fill nmeaINFO structure by GSV packet data.
+ * \brief Fill nmea_info_t structure by GSV packet data.
  * @param pack a pointer of packet structure.
  * @param info a pointer of summary information structure.
  */
-void nmea_GPGSV2info(nmeaGPGSV *pack, nmeaINFO *info)
+void nmea_GPGSV2info(nmeaGPGSV *pack, nmea_info_t *info)
 {
     int isat, isi, nsat;
 
@@ -444,11 +444,11 @@ void nmea_GPGSV2info(nmeaGPGSV *pack, nmeaINFO *info)
 }
 
 /**
- * \brief Fill nmeaINFO structure by RMC packet data.
+ * \brief Fill nmea_info_t structure by RMC packet data.
  * @param pack a pointer of packet structure.
  * @param info a pointer of summary information structure.
  */
-void nmea_GPRMC2info(nmeaGPRMC *pack, nmeaINFO *info)
+void nmea_GPRMC2info(nmeaGPRMC *pack, nmea_info_t *info)
 {
     NMEA_ASSERT(pack && info);
 
@@ -474,11 +474,11 @@ void nmea_GPRMC2info(nmeaGPRMC *pack, nmeaINFO *info)
 }
 
 /**
- * \brief Fill nmeaINFO structure by VTG packet data.
+ * \brief Fill nmea_info_t structure by VTG packet data.
  * @param pack a pointer of packet structure.
  * @param info a pointer of summary information structure.
  */
-void nmea_GPVTG2info(nmeaGPVTG *pack, nmeaINFO *info)
+void nmea_GPVTG2info(nmeaGPVTG *pack, nmea_info_t *info)
 {
     NMEA_ASSERT(pack && info);
 
@@ -495,7 +495,7 @@ void nmea_GPVTG2info(nmeaGPVTG *pack, nmeaINFO *info)
 int nmea_parse(
     nmeaPARSER *parser,
     const char *buff, int buff_sz,
-    nmeaINFO *info
+    nmea_info_t *info
 )
 {
     int ptype, nread = 0;
