@@ -181,7 +181,7 @@ int nmea_find_tail(const char *buff, int buff_sz, int *res_crc)
  * @param pack a pointer of packet which will filled by function.
  * @return 1 (true) - if parsed successfully or 0 (false) - if fail.
  */
-int nmea_parse_GPGGA(const char *buff, int buff_sz, nmea_gga_t *pack)
+int nmea_parse_gga(const char *buff, int buff_sz, nmea_gga_t *pack)
 {
     char time_buff[NMEA_TIMEPARSE_BUF];
 
@@ -216,7 +216,7 @@ int nmea_parse_GPGGA(const char *buff, int buff_sz, nmea_gga_t *pack)
  * @param pack a pointer of packet which will filled by function.
  * @return 1 (true) - if parsed successfully or 0 (false) - if fail.
  */
-int nmea_parse_GPGSA(const char *buff, int buff_sz, nmea_gsa_t *pack)
+int nmea_parse_gsa(const char *buff, int buff_sz, nmea_gsa_t *pack)
 {
     NMEA_ASSERT(buff && pack);
 
@@ -243,7 +243,7 @@ int nmea_parse_GPGSA(const char *buff, int buff_sz, nmea_gsa_t *pack)
  * @param pack a pointer of packet which will filled by function.
  * @return 1 (true) - if parsed successfully or 0 (false) - if fail.
  */
-int nmea_parse_GPGSV(const char *buff, int buff_sz, nmea_gsv_t *pack)
+int nmea_parse_gsv(const char *buff, int buff_sz, nmea_gsv_t *pack)
 {
     int nsen, nsat;
 
@@ -283,7 +283,7 @@ int nmea_parse_GPGSV(const char *buff, int buff_sz, nmea_gsv_t *pack)
  * @param pack a pointer of packet which will filled by function.
  * @return 1 (true) - if parsed successfully or 0 (false) - if fail.
  */
-int nmea_parse_GPRMC(const char *buff, int buff_sz, nmea_rmc_t *pack)
+int nmea_parse_rmc(const char *buff, int buff_sz, nmea_rmc_t *pack)
 {
     int nsen;
     char time_buff[NMEA_TIMEPARSE_BUF];
@@ -326,7 +326,7 @@ int nmea_parse_GPRMC(const char *buff, int buff_sz, nmea_rmc_t *pack)
  * @param pack a pointer of packet which will filled by function.
  * @return 1 (true) - if parsed successfully or 0 (false) - if fail.
  */
-int nmea_parse_GPVTG(const char *buff, int buff_sz, nmea_vtg_t *pack)
+int nmea_parse_vtg(const char *buff, int buff_sz, nmea_vtg_t *pack)
 {
     NMEA_ASSERT(buff && pack);
 
@@ -593,7 +593,7 @@ int nmea_parser_real_push(nmea_parser_t *parser, const char *buff, int buff_sz)
                 if (0 == (node->pack = rt_malloc(sizeof(nmea_gga_t))))
                     goto mem_fail;
                 node->packType = GPGGA;
-                if (!nmea_parse_GPGGA(
+                if (!nmea_parse_gga(
                     (const char *)parser->buffer + nparsed,
                     sen_sz, (nmea_gga_t *)node->pack))
                 {
@@ -605,7 +605,7 @@ int nmea_parser_real_push(nmea_parser_t *parser, const char *buff, int buff_sz)
                 if (0 == (node->pack = rt_malloc(sizeof(nmea_gsa_t))))
                     goto mem_fail;
                 node->packType = GPGSA;
-                if (!nmea_parse_GPGSA(
+                if (!nmea_parse_gsa(
                     (const char *)parser->buffer + nparsed,
                     sen_sz, (nmea_gsa_t *)node->pack))
                 {
@@ -617,7 +617,7 @@ int nmea_parser_real_push(nmea_parser_t *parser, const char *buff, int buff_sz)
                 if (0 == (node->pack = rt_malloc(sizeof(nmea_gsv_t))))
                     goto mem_fail;
                 node->packType = GPGSV;
-                if (!nmea_parse_GPGSV(
+                if (!nmea_parse_gsv(
                     (const char *)parser->buffer + nparsed,
                     sen_sz, (nmea_gsv_t *)node->pack))
                 {
@@ -629,7 +629,7 @@ int nmea_parser_real_push(nmea_parser_t *parser, const char *buff, int buff_sz)
                 if (0 == (node->pack = rt_malloc(sizeof(nmea_rmc_t))))
                     goto mem_fail;
                 node->packType = GPRMC;
-                if (!nmea_parse_GPRMC(
+                if (!nmea_parse_rmc(
                     (const char *)parser->buffer + nparsed,
                     sen_sz, (nmea_rmc_t *)node->pack))
                 {
@@ -641,7 +641,7 @@ int nmea_parser_real_push(nmea_parser_t *parser, const char *buff, int buff_sz)
                 if (0 == (node->pack = rt_malloc(sizeof(nmea_vtg_t))))
                     goto mem_fail;
                 node->packType = GPVTG;
-                if (!nmea_parse_GPVTG(
+                if (!nmea_parse_vtg(
                     (const char *)parser->buffer + nparsed,
                     sen_sz, (nmea_vtg_t *)node->pack))
                 {
