@@ -1,12 +1,5 @@
 #include "nmea_parse.h"
 
-typedef void (*nmeaTraceFunc)(const char *str, int str_size);
-typedef void (*nmeaErrorFunc)(const char *str, int str_size);
-static int nmea_parser_queue_clear(nmeaPARSER *parser);
-static int nmea_parser_push(nmeaPARSER *parser, const char *buff, int buff_sz);
-static int nmea_parser_pop(nmeaPARSER *parser, void **pack_ptr);
-static int nmea_parser_buff_clear(nmeaPARSER *parser);
-
 typedef struct _nmeaParserNODE
 {
     int packType;
@@ -14,26 +7,10 @@ typedef struct _nmeaParserNODE
     struct _nmeaParserNODE *next_node;
 } nmeaParserNODE;
 
-typedef struct _nmeaPROPERTY
-{
-    nmeaTraceFunc   trace_func;
-    nmeaErrorFunc   error_func;
-    int             parse_buff_size;
-
-} nmeaPROPERTY;
-
-/*
- * high level
- */
-
-nmeaPROPERTY *nmea_property(void)
-{
-    static nmeaPROPERTY prop = {
-        0, 0, NMEA_DEF_PARSEBUFF
-    };
-
-    return &prop;
-}
+static int nmea_parser_queue_clear(nmeaPARSER *parser);
+static int nmea_parser_push(nmeaPARSER *parser, const char *buff, int buff_sz);
+static int nmea_parser_pop(nmeaPARSER *parser, void **pack_ptr);
+static int nmea_parser_buff_clear(nmeaPARSER *parser);
 
  /**
   * \brief Initialization of parser object
@@ -42,7 +19,7 @@ nmeaPROPERTY *nmea_property(void)
 int nmea_parser_init(nmeaPARSER *parser)
 {
     int resv = 0;
-    int buff_size = nmea_property()->parse_buff_size;
+    int buff_size = NMEA_DEF_PARSEBUFF;
 
     NMEA_ASSERT(parser);
 
@@ -50,8 +27,8 @@ int nmea_parser_init(nmeaPARSER *parser)
         buff_size = NMEA_MIN_PARSEBUFF;
 
     rt_memset(parser, 0, sizeof(nmeaPARSER));
-
-    if (0 == (parser->buffer = rt_malloc(buff_size)))
+    parser->buffer = rt_malloc(buff_size);
+    if (RT_NULL == parser->buffer)
     {
         nmea_error("Insufficient memory!");
         resv = -1;

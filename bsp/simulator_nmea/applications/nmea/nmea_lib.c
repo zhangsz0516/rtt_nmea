@@ -11,20 +11,6 @@
 #define NMEA_TOKS_TYPE      (4)
 
 /**
- * \brief Calculate control sum of binary buffer
- */
-int nmea_calc_crc(const char *buff, int buff_sz)
-{
-    int chsum = 0,
-        it;
-
-    for (it = 0; it < buff_sz; ++it)
-        chsum ^= (int)buff[it];
-
-    return chsum;
-}
-
-/**
  * \brief Convert string to number
  */
 int nmea_atoi(const char *str, int str_sz, int radix)
@@ -60,41 +46,6 @@ double nmea_atof(const char *str, int str_sz)
     }
 
     return res;
-}
-
-/**
- * \brief Formating string (like standart printf) with CRC tail (*CRC)
- */
-int nmea_printf(char *buff, int buff_sz, const char *format, ...)
-{
-    int retval, add = 0;
-    va_list arg_ptr;
-
-    if (buff_sz <= 0)
-        return 0;
-
-    va_start(arg_ptr, format);
-
-    retval = vsnprintf(buff, buff_sz, format, arg_ptr);
-
-    if (retval > 0)
-    {
-        add = snprintf(
-            buff + retval, buff_sz - retval, "*%02x\r\n",
-            nmea_calc_crc(buff + 1, retval - 1));
-    }
-
-    retval += add;
-
-    if (retval < 0 || retval > buff_sz)
-    {
-        rt_memset(buff, ' ', buff_sz);
-        retval = buff_sz;
-    }
-
-    va_end(arg_ptr);
-
-    return retval;
 }
 
 /**

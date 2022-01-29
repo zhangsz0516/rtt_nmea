@@ -1,4 +1,5 @@
 #include <rtthread.h>
+#include <stdio.h>
 
 #define USING_NMEA_LIB
 
@@ -34,6 +35,8 @@ int dbg_printf(const char *fmt, ...)
     int length = vsnprintf(rt_log_buf, sizeof(rt_log_buf) - 1, fmt, args);
 
     rt_kputs(rt_log_buf);
+
+    return length;
 }
 
 void nmea_parse_test_01(void)
