@@ -15,16 +15,16 @@ typedef struct _nmeaParserNODE
     struct _nmeaParserNODE *next_node;
 } nmeaParserNODE;
 
-static int nmea_parser_queue_clear(nmeaPARSER *parser);
-static int nmea_parser_push(nmeaPARSER *parser, const char *buff, int buff_sz);
-static int nmea_parser_pop(nmeaPARSER *parser, void **pack_ptr);
-static int nmea_parser_buff_clear(nmeaPARSER *parser);
+static int nmea_parser_queue_clear(nmea_parser_t *parser);
+static int nmea_parser_push(nmea_parser_t *parser, const char *buff, int buff_sz);
+static int nmea_parser_pop(nmea_parser_t *parser, void **pack_ptr);
+static int nmea_parser_buff_clear(nmea_parser_t *parser);
 
  /**
   * \brief Initialization of parser object
   * @return true (1) - success or false (0) - fail
   */
-int nmea_parser_init(nmeaPARSER *parser)
+int nmea_parser_init(nmea_parser_t *parser)
 {
     int resv = 0;
     int buff_size = NMEA_DEF_PARSEBUFF;
@@ -34,7 +34,7 @@ int nmea_parser_init(nmeaPARSER *parser)
     if (buff_size < NMEA_MIN_PARSEBUFF)
         buff_size = NMEA_MIN_PARSEBUFF;
 
-    rt_memset(parser, 0, sizeof(nmeaPARSER));
+    rt_memset(parser, 0, sizeof(nmea_parser_t));
     parser->buffer = rt_malloc(buff_size);
     if (RT_NULL == parser->buffer)
     {
@@ -53,12 +53,12 @@ int nmea_parser_init(nmeaPARSER *parser)
 /**
  * \brief Destroy parser object
  */
-void nmea_parser_destroy(nmeaPARSER *parser)
+void nmea_parser_destroy(nmea_parser_t *parser)
 {
     NMEA_ASSERT(parser && parser->buffer);
     rt_free(parser->buffer);
     nmea_parser_queue_clear(parser);
-    rt_memset(parser, 0, sizeof(nmeaPARSER));
+    rt_memset(parser, 0, sizeof(nmea_parser_t));
 }
 
 int _nmea_parse_time(const char *buff, int buff_sz, nmea_time_t *res)
@@ -493,7 +493,7 @@ void nmea_GPVTG2info(nmeaGPVTG *pack, nmea_info_t *info)
  * @return Number of packets wos parsed
  */
 int nmea_parse(
-    nmeaPARSER *parser,
+    nmea_parser_t *parser,
     const char *buff, int buff_sz,
     nmea_info_t *info
 )
@@ -538,7 +538,7 @@ int nmea_parse(
  * low level
  */
 
-int nmea_parser_real_push(nmeaPARSER *parser, const char *buff, int buff_sz)
+int nmea_parser_real_push(nmea_parser_t *parser, const char *buff, int buff_sz)
 {
     int nparsed = 0, crc, sen_sz, ptype;
     nmeaParserNODE *node = 0;
@@ -684,7 +684,7 @@ mem_fail:
  * \brief Analysis of buffer and keep results into parser
  * @return Number of bytes wos parsed from buffer
  */
-static int nmea_parser_push(nmeaPARSER *parser, const char *buff, int buff_sz)
+static int nmea_parser_push(nmea_parser_t *parser, const char *buff, int buff_sz)
 {
     int nparse, nparsed = 0;
 
@@ -710,7 +710,7 @@ static int nmea_parser_push(nmeaPARSER *parser, const char *buff, int buff_sz)
  * @return Type of packet
  * @see nmeaPACKTYPE
  */
-int nmea_parser_top(nmeaPARSER *parser)
+int nmea_parser_top(nmea_parser_t *parser)
 {
     int retval = GPNON;
     nmeaParserNODE *node = (nmeaParserNODE *)parser->top_node;
@@ -728,7 +728,7 @@ int nmea_parser_top(nmeaPARSER *parser)
  * @return Received packet type
  * @see nmeaPACKTYPE
  */
-static int nmea_parser_pop(nmeaPARSER *parser, void **pack_ptr)
+static int nmea_parser_pop(nmea_parser_t *parser, void **pack_ptr)
 {
     int retval = GPNON;
     nmeaParserNODE *node = (nmeaParserNODE *)parser->top_node;
@@ -753,7 +753,7 @@ static int nmea_parser_pop(nmeaPARSER *parser, void **pack_ptr)
  * @return Received packet type
  * @see nmeaPACKTYPE
  */
-int nmea_parser_peek(nmeaPARSER *parser, void **pack_ptr)
+int nmea_parser_peek(nmea_parser_t *parser, void **pack_ptr)
 {
     int retval = GPNON;
     nmeaParserNODE *node = (nmeaParserNODE *)parser->top_node;
@@ -774,7 +774,7 @@ int nmea_parser_peek(nmeaPARSER *parser, void **pack_ptr)
  * @return Deleted packet type
  * @see nmeaPACKTYPE
  */
-int nmea_parser_drop(nmeaPARSER *parser)
+int nmea_parser_drop(nmea_parser_t *parser)
 {
     int retval = GPNON;
     nmeaParserNODE *node = (nmeaParserNODE *)parser->top_node;
@@ -799,7 +799,7 @@ int nmea_parser_drop(nmeaPARSER *parser)
  * \brief Clear cache of parser
  * @return true (1) - success
  */
-static int nmea_parser_buff_clear(nmeaPARSER *parser)
+static int nmea_parser_buff_clear(nmea_parser_t *parser)
 {
     NMEA_ASSERT(parser && parser->buffer);
     parser->buff_use = 0;
@@ -810,7 +810,7 @@ static int nmea_parser_buff_clear(nmeaPARSER *parser)
  * \brief Clear packets queue into parser
  * @return true (1) - success
  */
-static int nmea_parser_queue_clear(nmeaPARSER *parser)
+static int nmea_parser_queue_clear(nmea_parser_t *parser)
 {
     NMEA_ASSERT(parser);
     while (parser->top_node)

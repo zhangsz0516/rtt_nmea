@@ -43,7 +43,7 @@ void nmea_parse_test_01(void)
 {
     int it;
     nmea_info_t info = { 0 };
-    nmeaPARSER parser;
+    nmea_parser_t parser;
 
     double x = 3333333333.444444444444444;
 
