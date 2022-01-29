@@ -49,7 +49,7 @@ typedef struct _nmeaTIME
 /**
  * Information about satellite
  * @see nmeaSATINFO
- * @see nmeaGPGSV
+ * @see nmea_gsv_t
  */
 typedef struct _nmeaSATELLITE
 {
@@ -63,7 +63,7 @@ typedef struct _nmeaSATELLITE
 /**
  * Information about all satellites in view
  * @see nmea_info_t
- * @see nmeaGPGSV
+ * @see nmea_gsv_t
  */
 typedef struct _nmeaSATINFO
 {
@@ -142,7 +142,7 @@ typedef struct _nmeaGPGGA
     char    diff_units; /**< [M]eters (Units of geoidal separation) */
     double  dgps_age;   /**< Time in seconds since last DGPS update */
     int     dgps_sid;   /**< DGPS station ID number */
-} nmeaGPGGA;
+} nmea_gga_t;
 
 /**
  * GSA packet information structure (Satellite status)
@@ -155,7 +155,7 @@ typedef struct _nmeaGPGSA
     double  PDOP;       /**< Dilution of precision */
     double  HDOP;       /**< Horizontal dilution of precision */
     double  VDOP;       /**< Vertical dilution of precision */
-} nmeaGPGSA;
+} nmea_gsa_t;
 
 /**
  * GSV packet information structure (Satellites in view)
@@ -166,7 +166,7 @@ typedef struct _nmeaGPGSV
     int     pack_index; /**< Message number */
     int     sat_count;  /**< Total number of satellites in view */
     nmea_satellite_t sat_data[NMEA_SATINPACK];
-} nmeaGPGSV;
+} nmea_gsv_t;
 
 /**
  * RMC packet information structure (Recommended Minimum sentence C)
@@ -184,7 +184,7 @@ typedef struct _nmeaGPRMC
     double  declination; /**< Magnetic variation degrees (Easterly var. subtracts from true course) */
     char    declin_ew;  /**< [E]ast or [W]est */
     char    mode;       /**< Mode indicator of fix type (A = autonomous, D = differential, E = estimated, N = not valid, S = simulator) */
-} nmeaGPRMC;
+} nmea_rmc_t;
 
 /**
  * VTG packet information structure (Track made good and ground speed)
@@ -199,7 +199,7 @@ typedef struct _nmeaGPVTG
     char    spn_n;      /**< Fixed text 'N' indicates that speed over ground is in knots */
     double  spk;        /**< Ground speed, kilometers per hour */
     char    spk_k;      /**< Fixed text 'K' indicates that speed over ground is in kilometers/hour */
-} nmeaGPVTG;
+} nmea_vtg_t;
 
 int nmea_scanf(const char *buff, int buff_sz, const char *format, ...);
 int nmea_atoi(const char *str, int str_sz, int radix);
