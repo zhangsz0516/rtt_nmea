@@ -8,12 +8,12 @@
 #define NMEA_TOKS_WIDTH     (3)
 #define NMEA_TOKS_TYPE      (4)
 
-typedef struct _nmeaParserNODE
+typedef struct _nmea_parser_node
 {
     int packType;
     void *pack;
-    struct _nmeaParserNODE *next_node;
-} nmeaParserNODE;
+    struct _nmea_parser_node *next_node;
+} nmea_parser_node_t;
 
 static int nmea_parser_queue_clear(nmea_parser_t *parser);
 static int nmea_parser_push(nmea_parser_t *parser, const char *buff, int buff_sz);
@@ -89,11 +89,11 @@ int _nmea_parse_time(const char *buff, int buff_sz, nmea_time_t *res)
 }
 
 /**
- * \brief Define packet type by header (nmeaPACKTYPE).
+ * \brief Define packet type by header (NMEA_PACK_TYPE).
  * @param buff a constant character pointer of packet buffer.
  * @param buff_sz buffer size.
  * @return The defined packet type
- * @see nmeaPACKTYPE
+ * @see NMEA_PACK_TYPE
  */
 int nmea_pack_type(const char *buff, int buff_sz)
 {
@@ -360,7 +360,7 @@ int nmea_parse_vtg(const char *buff, int buff_sz, nmea_vtg_t *pack)
  * @param pack a pointer of packet structure.
  * @param info a pointer of summary information structure.
  */
-void nmea_GPGGA2info(nmea_gga_t *pack, nmea_info_t *info)
+void nmea_gga_info(nmea_gga_t *pack, nmea_info_t *info)
 {
     NMEA_ASSERT(pack && info);
 
@@ -381,7 +381,7 @@ void nmea_GPGGA2info(nmea_gga_t *pack, nmea_info_t *info)
  * @param pack a pointer of packet structure.
  * @param info a pointer of summary information structure.
  */
-void nmea_GPGSA2info(nmea_gsa_t *pack, nmea_info_t *info)
+void nmea_gsa_info(nmea_gsa_t *pack, nmea_info_t *info)
 {
     int i, j, nuse = 0;
 
@@ -413,7 +413,7 @@ void nmea_GPGSA2info(nmea_gsa_t *pack, nmea_info_t *info)
  * @param pack a pointer of packet structure.
  * @param info a pointer of summary information structure.
  */
-void nmea_GPGSV2info(nmea_gsv_t *pack, nmea_info_t *info)
+void nmea_gsv_info(nmea_gsv_t *pack, nmea_info_t *info)
 {
     int isat, isi, nsat;
 
@@ -448,7 +448,7 @@ void nmea_GPGSV2info(nmea_gsv_t *pack, nmea_info_t *info)
  * @param pack a pointer of packet structure.
  * @param info a pointer of summary information structure.
  */
-void nmea_GPRMC2info(nmea_rmc_t *pack, nmea_info_t *info)
+void nmea_rmc_info(nmea_rmc_t *pack, nmea_info_t *info)
 {
     NMEA_ASSERT(pack && info);
 
@@ -478,7 +478,7 @@ void nmea_GPRMC2info(nmea_rmc_t *pack, nmea_info_t *info)
  * @param pack a pointer of packet structure.
  * @param info a pointer of summary information structure.
  */
-void nmea_GPVTG2info(nmea_vtg_t *pack, nmea_info_t *info)
+void nmea_vtg_info(nmea_vtg_t *pack, nmea_info_t *info)
 {
     NMEA_ASSERT(pack && info);
 
@@ -512,19 +512,19 @@ int nmea_parse(
         switch (ptype)
         {
         case GPGGA:
-            nmea_GPGGA2info((nmea_gga_t *)pack, info);
+            nmea_gga_info((nmea_gga_t *)pack, info);
             break;
         case GPGSA:
-            nmea_GPGSA2info((nmea_gsa_t *)pack, info);
+            nmea_gsa_info((nmea_gsa_t *)pack, info);
             break;
         case GPGSV:
-            nmea_GPGSV2info((nmea_gsv_t *)pack, info);
+            nmea_gsv_info((nmea_gsv_t *)pack, info);
             break;
         case GPRMC:
-            nmea_GPRMC2info((nmea_rmc_t *)pack, info);
+            nmea_rmc_info((nmea_rmc_t *)pack, info);
             break;
         case GPVTG:
-            nmea_GPVTG2info((nmea_vtg_t *)pack, info);
+            nmea_vtg_info((nmea_vtg_t *)pack, info);
             break;
         };
 
@@ -541,7 +541,7 @@ int nmea_parse(
 int nmea_parser_real_push(nmea_parser_t *parser, const char *buff, int buff_sz)
 {
     int nparsed = 0, crc, sen_sz, ptype;
-    nmeaParserNODE *node = 0;
+    nmea_parser_node_t *node = 0;
 
     NMEA_ASSERT(parser && parser->buffer);
 
@@ -582,7 +582,7 @@ int nmea_parser_real_push(nmea_parser_t *parser, const char *buff, int buff_sz)
                 (const char *)parser->buffer + nparsed + 1,
                 parser->buff_use - nparsed - 1);
 
-            if (0 == (node = rt_malloc(sizeof(nmeaParserNODE))))
+            if (0 == (node = rt_malloc(sizeof(nmea_parser_node_t))))
                 goto mem_fail;
 
             node->pack = 0;
@@ -658,7 +658,7 @@ int nmea_parser_real_push(nmea_parser_t *parser, const char *buff, int buff_sz)
             if (node)
             {
                 if (parser->end_node)
-                    ((nmeaParserNODE *)parser->end_node)->next_node = node;
+                    ((nmea_parser_node_t *)parser->end_node)->next_node = node;
                 parser->end_node = node;
                 if (!parser->top_node)
                     parser->top_node = node;
@@ -695,8 +695,7 @@ static int nmea_parser_push(nmea_parser_t *parser, const char *buff, int buff_sz
         else
             nparse = buff_sz;
 
-        nparsed += nmea_parser_real_push(
-            parser, buff, nparse);
+        nparsed += nmea_parser_real_push(parser, buff, nparse);
 
         buff_sz -= nparse;
 
@@ -708,12 +707,12 @@ static int nmea_parser_push(nmea_parser_t *parser, const char *buff, int buff_sz
 /**
  * \brief Get type of top packet keeped into parser
  * @return Type of packet
- * @see nmeaPACKTYPE
+ * @see NMEA_PACK_TYPE
  */
 int nmea_parser_top(nmea_parser_t *parser)
 {
     int retval = GPNON;
-    nmeaParserNODE *node = (nmeaParserNODE *)parser->top_node;
+    nmea_parser_node_t *node = (nmea_parser_node_t *)parser->top_node;
 
     NMEA_ASSERT(parser && parser->buffer);
 
@@ -726,12 +725,12 @@ int nmea_parser_top(nmea_parser_t *parser)
 /**
  * \brief Withdraw top packet from parser
  * @return Received packet type
- * @see nmeaPACKTYPE
+ * @see NMEA_PACK_TYPE
  */
 static int nmea_parser_pop(nmea_parser_t *parser, void **pack_ptr)
 {
     int retval = GPNON;
-    nmeaParserNODE *node = (nmeaParserNODE *)parser->top_node;
+    nmea_parser_node_t *node = (nmea_parser_node_t *)parser->top_node;
 
     NMEA_ASSERT(parser && parser->buffer);
 
@@ -751,12 +750,12 @@ static int nmea_parser_pop(nmea_parser_t *parser, void **pack_ptr)
 /**
  * \brief Get top packet from parser without withdraw
  * @return Received packet type
- * @see nmeaPACKTYPE
+ * @see NMEA_PACK_TYPE
  */
 int nmea_parser_peek(nmea_parser_t *parser, void **pack_ptr)
 {
     int retval = GPNON;
-    nmeaParserNODE *node = (nmeaParserNODE *)parser->top_node;
+    nmea_parser_node_t *node = (nmea_parser_node_t *)parser->top_node;
 
     NMEA_ASSERT(parser && parser->buffer);
 
@@ -772,12 +771,12 @@ int nmea_parser_peek(nmea_parser_t *parser, void **pack_ptr)
 /**
  * \brief Delete top packet from parser
  * @return Deleted packet type
- * @see nmeaPACKTYPE
+ * @see NMEA_PACK_TYPE
  */
 int nmea_parser_drop(nmea_parser_t *parser)
 {
     int retval = GPNON;
-    nmeaParserNODE *node = (nmeaParserNODE *)parser->top_node;
+    nmea_parser_node_t *node = (nmea_parser_node_t *)parser->top_node;
 
     NMEA_ASSERT(parser && parser->buffer);
 
