@@ -13,6 +13,8 @@ const char *buff[] =
         "$GPRMC,031024.000,A,3115.6422,N,12127.5490,E,0.58,98.86,180918,,,A*5A\r\n"
 };
 
+const char *buff2 = "$GPRMC,031024.000,A,3115.6422,N,12127.5490,E,0.58,98.86,180918,,,A*5A\r\n";
+
 void nmea_parse_test_01(void)
 {
     int it;
@@ -25,6 +27,7 @@ void nmea_parse_test_01(void)
     nmea_zero_INFO(&info);
     nmea_parser_init(&parser);
 
+#if 0
     for (it = 0; it < 8; ++it)
     {
         nmea_parse(&parser, buff[it], (int)rt_strlen(buff[it]), &info);
@@ -33,6 +36,14 @@ void nmea_parse_test_01(void)
         rt_kprintf("%03d, Lat: %lf, Lon: %lf, Sig: %d, Fix: %d\n", it, dpos.lat,
             dpos.lon, info.sig, info.fix);
     }
+#endif
+    int len = strlen(buff2);
+    rt_kprintf("buffer len = %d\n", len);
+    nmea_parse(&parser, buff2, (int)strlen(buff2), &info);
+
+    nmea_info2pos(&info, &dpos);
+    rt_kprintf("RMC : Lat: %lf, Lon: %lf, Sig: %d, Fix: %d\n", dpos.lat,
+        dpos.lon, info.sig, info.fix);
 
     nmea_parser_destroy(&parser);
 }
