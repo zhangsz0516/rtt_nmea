@@ -1,3 +1,23 @@
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2022-01-29     zhangsz      nmealib rearrange
+ */
+
+/*
+ *
+ * NMEA library
+ * URL: http://nmea.sourceforge.net
+ * Author: Tim (xtimor@gmail.com)
+ * Licence: http://www.gnu.org/licenses/lgpl.html
+ * $Id: parse.c 17 2008-03-11 11:56:11Z xtimor $
+ *
+ */
+
 #include <nmea_parse.h>
 #include <stdlib.h>
 #include <string.h>
