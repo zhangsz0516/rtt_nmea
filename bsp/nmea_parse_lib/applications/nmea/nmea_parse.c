@@ -192,9 +192,15 @@ fail:
     return tok_count;
 }
 
-static int _nmea_parse_time(const char *buff, int buff_sz, nmea_time_t *res)
+static rt_err_t _nmea_parse_time(const char *buff, int buff_sz, nmea_time_t *res)
 {
     int success = 0;
+
+    if (buff == RT_NULL)
+    {
+        LOG_E("%s : buff is NULL!", __func__);
+        return -RT_ERROR;
+    }
 
     switch (buff_sz)
     {
@@ -216,21 +222,18 @@ static int _nmea_parse_time(const char *buff, int buff_sz, nmea_time_t *res)
         break;
     }
 
-    return (success ? 0 : -1);
+    return (success ? RT_EOK : -RT_ERROR);
 }
 
-/**
- * \brief Parse GGA packet from buffer.
- * @param buff a constant character pointer of packet buffer.
- * @param buff_sz buffer size.
- * @param pack a pointer of packet which will filled by function.
- * @return 1 (true) - if parsed successfully or 0 (false) - if fail.
- */
-int nmea_parse_gga(const char *buff, int buff_sz, nmea_gga_t *pack)
+rt_err_t nmea_parse_gga(const char *buff, int buff_sz, nmea_gga_t *pack)
 {
-    char time_buff[NMEA_TIMEPARSE_BUF];
+    char time_buff[NMEA_TIMEPARSE_BUF] = { 0 };
 
-    RT_ASSERT(buff && pack);
+    if ((buff == RT_NULL) || (pack == RT_NULL))
+    {
+        LOG_E("%s : buff or pack is NULL!", __func__);
+        return -RT_ERROR;
+    }
 
     rt_memset(pack, 0, sizeof(nmea_gga_t));
 
@@ -241,29 +244,26 @@ int nmea_parse_gga(const char *buff, int buff_sz, nmea_gga_t *pack)
         &(pack->sig), &(pack->satinuse), &(pack->HDOP), &(pack->elv), &(pack->elv_units),
         &(pack->diff), &(pack->diff_units), &(pack->dgps_age), &(pack->dgps_sid)))
     {
-        LOG_E("GPGGA parse error!");
-        return 0;
+        LOG_E("%s : parse error!", __func__);
+        return -RT_ERROR;
     }
 
     if (0 != _nmea_parse_time(&time_buff[0], (int)rt_strlen(&time_buff[0]), &(pack->utc)))
     {
-        LOG_E("GPGGA time parse error!");
-        return 0;
+        LOG_E("%s : nmea_time parse error!", __func__);
+        return -RT_ERROR;
     }
 
-    return 1;
+    return RT_EOK;
 }
 
-/**
- * \brief Parse GSA packet from buffer.
- * @param buff a constant character pointer of packet buffer.
- * @param buff_sz buffer size.
- * @param pack a pointer of packet which will filled by function.
- * @return 1 (true) - if parsed successfully or 0 (false) - if fail.
- */
-int nmea_parse_gsa(const char *buff, int buff_sz, nmea_gsa_t *pack)
+rt_err_t nmea_parse_gsa(const char *buff, int buff_sz, nmea_gsa_t *pack)
 {
-    RT_ASSERT(buff && pack);
+    if ((buff == RT_NULL) || (pack == RT_NULL))
+    {
+        LOG_E("%s : buff or pack is NULL!", __func__);
+        return -RT_ERROR;
+    }
 
     rt_memset(pack, 0, sizeof(nmea_gsa_t));
 
@@ -274,25 +274,23 @@ int nmea_parse_gsa(const char *buff, int buff_sz, nmea_gsa_t *pack)
         &(pack->sat_prn[6]), &(pack->sat_prn[7]), &(pack->sat_prn[8]), &(pack->sat_prn[9]), &(pack->sat_prn[10]), &(pack->sat_prn[11]),
         &(pack->PDOP), &(pack->HDOP), &(pack->VDOP)))
     {
-        LOG_E("GPGSA parse error!");
-        return 0;
+        LOG_E("%s : parse error!", __func__);
+        return -RT_ERROR;
     }
 
-    return 1;
+    return RT_EOK;
 }
 
-/**
- * \brief Parse GSV packet from buffer.
- * @param buff a constant character pointer of packet buffer.
- * @param buff_sz buffer size.
- * @param pack a pointer of packet which will filled by function.
- * @return 1 (true) - if parsed successfully or 0 (false) - if fail.
- */
-int nmea_parse_gsv(const char *buff, int buff_sz, nmea_gsv_t *pack)
+rt_err_t nmea_parse_gsv(const char *buff, int buff_sz, nmea_gsv_t *pack)
 {
-    int nsen, nsat;
+    int nsen = 0;
+    int nsat = 0;
 
-    RT_ASSERT(buff && pack);
+    if ((buff == RT_NULL) || (pack == RT_NULL))
+    {
+        LOG_E("%s : buff or pack is NULL!", __func__);
+        return -RT_ERROR;
+    }
 
     rt_memset(pack, 0, sizeof(nmea_gsv_t));
 
@@ -314,26 +312,23 @@ int nmea_parse_gsv(const char *buff, int buff_sz, nmea_gsv_t *pack)
 
     if (nsen < nsat || nsen >(NMEA_SATINPACK * 4 + 3))
     {
-        LOG_E("GPGSV parse error!");
-        return 0;
+        LOG_E("%s : parse error!", __func__);
+        return -RT_ERROR;
     }
 
-    return 1;
+    return RT_EOK;
 }
 
-/**
- * \brief Parse RMC packet from buffer.
- * @param buff a constant character pointer of packet buffer.
- * @param buff_sz buffer size.
- * @param pack a pointer of packet which will filled by function.
- * @return 1 (true) - if parsed successfully or 0 (false) - if fail.
- */
-int nmea_parse_rmc(const char *buff, int buff_sz, nmea_rmc_t *pack)
+rt_err_t nmea_parse_rmc(const char *buff, int buff_sz, nmea_rmc_t *pack)
 {
-    int nsen;
-    char time_buff[NMEA_TIMEPARSE_BUF];
+    int nsen = -1;
+    char time_buff[NMEA_TIMEPARSE_BUF] = { 0 };
 
-    RT_ASSERT(buff && pack);
+    if ((buff == RT_NULL) || (pack == RT_NULL))
+    {
+        LOG_E("%s : buff or pack is NULL!", __func__);
+        return -RT_ERROR;
+    }
 
     rt_memset(pack, 0, sizeof(nmea_rmc_t));
 
@@ -347,33 +342,30 @@ int nmea_parse_rmc(const char *buff, int buff_sz, nmea_rmc_t *pack)
 
     if (nsen != 13 && nsen != 14)
     {
-        LOG_E("GPRMC parse error!");
-        return 0;
+        LOG_E("%s : parse error!", __func__);
+        return -RT_ERROR;
     }
 
     if (0 != _nmea_parse_time(&time_buff[0], (int)rt_strlen(&time_buff[0]), &(pack->utc)))
     {
-        LOG_E("GPRMC time parse error!");
-        return 0;
+        LOG_E("%s : time parse error!", __func__);
+        return -RT_ERROR;
     }
 
     if (pack->utc.year < 90)
         pack->utc.year += 100;
     pack->utc.mon -= 1;
 
-    return 1;
+    return RT_EOK;
 }
 
-/**
- * \brief Parse VTG packet from buffer.
- * @param buff a constant character pointer of packet buffer.
- * @param buff_sz buffer size.
- * @param pack a pointer of packet which will filled by function.
- * @return 1 (true) - if parsed successfully or 0 (false) - if fail.
- */
-int nmea_parse_vtg(const char *buff, int buff_sz, nmea_vtg_t *pack)
+rt_err_t nmea_parse_vtg(const char *buff, int buff_sz, nmea_vtg_t *pack)
 {
-    RT_ASSERT(buff && pack);
+    if ((buff == RT_NULL) || (pack == RT_NULL))
+    {
+        LOG_E("%s : buff or pack is NULL!", __func__);
+        return -RT_ERROR;
+    }
 
     rt_memset(pack, 0, sizeof(nmea_vtg_t));
 
@@ -384,8 +376,8 @@ int nmea_parse_vtg(const char *buff, int buff_sz, nmea_vtg_t *pack)
         &(pack->spn), &(pack->spn_n),
         &(pack->spk), &(pack->spk_k)))
     {
-        LOG_E("GPVTG parse error!");
-        return 0;
+        LOG_E("%s : parse error!", __func__);
+        return -RT_ERROR;
     }
 
     if (pack->dir_t != 'T' ||
@@ -393,9 +385,9 @@ int nmea_parse_vtg(const char *buff, int buff_sz, nmea_vtg_t *pack)
         pack->spn_n != 'N' ||
         pack->spk_k != 'K')
     {
-        LOG_E("GPVTG parse error (format error)!");
-        return 0;
+        LOG_E("%s : parse format error!", __func__);
+        return -RT_ERROR;
     }
 
-    return 1;
+    return RT_EOK;
 }

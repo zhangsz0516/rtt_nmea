@@ -23,11 +23,6 @@ extern "C" {
 #define NMEA_CONVSTR_BUF        (256)
 #define NMEA_TIMEPARSE_BUF      (256)
 
-#define NMEA_DEF_PARSEBUFF      (1024)
-#define NMEA_MIN_PARSEBUFF      (256)
-
-#define NMEA_TUD_KNOTS          (1.852) /**< Knots, kilometer / NMEA_TUD_KNOTS = knot */
-
 /**
  * NMEA : Date and time data
  */
@@ -147,11 +142,11 @@ typedef struct _nmea_vtg
     char    spk_k;      /**< Fixed text 'K' indicates that speed over ground is in kilometers/hour */
 } nmea_vtg_t;
 
-int nmea_parse_gga(const char *buff, int buff_sz, nmea_gga_t *pack);
-int nmea_parse_gsa(const char *buff, int buff_sz, nmea_gsa_t *pack);
-int nmea_parse_gsv(const char *buff, int buff_sz, nmea_gsv_t *pack);
-int nmea_parse_rmc(const char *buff, int buff_sz, nmea_rmc_t *pack);
-int nmea_parse_vtg(const char *buff, int buff_sz, nmea_vtg_t *pack);
+rt_err_t nmea_parse_gga(const char *buff, int buff_sz, nmea_gga_t *pack);
+rt_err_t nmea_parse_gsa(const char *buff, int buff_sz, nmea_gsa_t *pack);
+rt_err_t nmea_parse_gsv(const char *buff, int buff_sz, nmea_gsv_t *pack);
+rt_err_t nmea_parse_rmc(const char *buff, int buff_sz, nmea_rmc_t *pack);
+rt_err_t nmea_parse_vtg(const char *buff, int buff_sz, nmea_vtg_t *pack);
 
 #ifdef  __cplusplus
 }
