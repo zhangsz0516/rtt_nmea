@@ -159,6 +159,8 @@
 
 /* IoT Cloud */
 
+#define PKG_USING_NMEALIB
+#define PKG_USING_NMEALIB_LATEST_VERSION
 
 /* security packages */
 
