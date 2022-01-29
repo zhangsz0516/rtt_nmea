@@ -3,6 +3,14 @@
 #include <string.h>
 #include <ctype.h>
 
+#define DBG_TAG    "nmea.parse"
+#ifdef PW_NMEA_USING_DEBUG
+#define DBG_LVL     DBG_LOG
+#else
+#define DBG_LVL     DBG_INFO
+#endif
+#include <rtdbg.h>
+
 #define NMEA_TOKS_COMPARE   (1)
 #define NMEA_TOKS_PERCENT   (2)
 #define NMEA_TOKS_WIDTH     (3)
@@ -11,7 +19,7 @@
 /**
  * \brief Convert string to number
  */
-int nmea_atoi(const char *str, int str_sz, int radix)
+static int nmea_atoi(const char *str, int str_sz, int radix)
 {
     char *tmp_ptr;
     char buff[NMEA_CONVSTR_BUF];
@@ -30,10 +38,10 @@ int nmea_atoi(const char *str, int str_sz, int radix)
 /**
  * \brief Convert string to fraction number
  */
-double nmea_atof(const char *str, int str_sz)
+static double nmea_atof(const char *str, int str_sz)
 {
-    char *tmp_ptr;
-    char buff[NMEA_CONVSTR_BUF];
+    char *tmp_ptr = RT_NULL;
+    char buff[NMEA_CONVSTR_BUF] = { 0 };
     double res = 0;
 
     if (str_sz < NMEA_CONVSTR_BUF)
@@ -184,7 +192,7 @@ fail:
     return tok_count;
 }
 
-int _nmea_parse_time(const char *buff, int buff_sz, nmea_time_t *res)
+static int _nmea_parse_time(const char *buff, int buff_sz, nmea_time_t *res)
 {
     int success = 0;
 
@@ -203,7 +211,7 @@ int _nmea_parse_time(const char *buff, int buff_sz, nmea_time_t *res)
         ));
         break;
     default:
-        nmea_error("Parse of time error (format error)!");
+        LOG_E("Parse of time error (format error)!");
         success = 0;
         break;
     }
@@ -222,7 +230,7 @@ int nmea_parse_gga(const char *buff, int buff_sz, nmea_gga_t *pack)
 {
     char time_buff[NMEA_TIMEPARSE_BUF];
 
-    NMEA_ASSERT(buff && pack);
+    RT_ASSERT(buff && pack);
 
     rt_memset(pack, 0, sizeof(nmea_gga_t));
 
@@ -233,13 +241,13 @@ int nmea_parse_gga(const char *buff, int buff_sz, nmea_gga_t *pack)
         &(pack->sig), &(pack->satinuse), &(pack->HDOP), &(pack->elv), &(pack->elv_units),
         &(pack->diff), &(pack->diff_units), &(pack->dgps_age), &(pack->dgps_sid)))
     {
-        nmea_error("GPGGA parse error!");
+        LOG_E("GPGGA parse error!");
         return 0;
     }
 
     if (0 != _nmea_parse_time(&time_buff[0], (int)rt_strlen(&time_buff[0]), &(pack->utc)))
     {
-        nmea_error("GPGGA time parse error!");
+        LOG_E("GPGGA time parse error!");
         return 0;
     }
 
@@ -255,7 +263,7 @@ int nmea_parse_gga(const char *buff, int buff_sz, nmea_gga_t *pack)
  */
 int nmea_parse_gsa(const char *buff, int buff_sz, nmea_gsa_t *pack)
 {
-    NMEA_ASSERT(buff && pack);
+    RT_ASSERT(buff && pack);
 
     rt_memset(pack, 0, sizeof(nmea_gsa_t));
 
@@ -266,7 +274,7 @@ int nmea_parse_gsa(const char *buff, int buff_sz, nmea_gsa_t *pack)
         &(pack->sat_prn[6]), &(pack->sat_prn[7]), &(pack->sat_prn[8]), &(pack->sat_prn[9]), &(pack->sat_prn[10]), &(pack->sat_prn[11]),
         &(pack->PDOP), &(pack->HDOP), &(pack->VDOP)))
     {
-        nmea_error("GPGSA parse error!");
+        LOG_E("GPGSA parse error!");
         return 0;
     }
 
@@ -284,7 +292,7 @@ int nmea_parse_gsv(const char *buff, int buff_sz, nmea_gsv_t *pack)
 {
     int nsen, nsat;
 
-    NMEA_ASSERT(buff && pack);
+    RT_ASSERT(buff && pack);
 
     rt_memset(pack, 0, sizeof(nmea_gsv_t));
 
@@ -306,7 +314,7 @@ int nmea_parse_gsv(const char *buff, int buff_sz, nmea_gsv_t *pack)
 
     if (nsen < nsat || nsen >(NMEA_SATINPACK * 4 + 3))
     {
-        nmea_error("GPGSV parse error!");
+        LOG_E("GPGSV parse error!");
         return 0;
     }
 
@@ -325,7 +333,7 @@ int nmea_parse_rmc(const char *buff, int buff_sz, nmea_rmc_t *pack)
     int nsen;
     char time_buff[NMEA_TIMEPARSE_BUF];
 
-    NMEA_ASSERT(buff && pack);
+    RT_ASSERT(buff && pack);
 
     rt_memset(pack, 0, sizeof(nmea_rmc_t));
 
@@ -339,13 +347,13 @@ int nmea_parse_rmc(const char *buff, int buff_sz, nmea_rmc_t *pack)
 
     if (nsen != 13 && nsen != 14)
     {
-        nmea_error("GPRMC parse error!");
+        LOG_E("GPRMC parse error!");
         return 0;
     }
 
     if (0 != _nmea_parse_time(&time_buff[0], (int)rt_strlen(&time_buff[0]), &(pack->utc)))
     {
-        nmea_error("GPRMC time parse error!");
+        LOG_E("GPRMC time parse error!");
         return 0;
     }
 
@@ -365,7 +373,7 @@ int nmea_parse_rmc(const char *buff, int buff_sz, nmea_rmc_t *pack)
  */
 int nmea_parse_vtg(const char *buff, int buff_sz, nmea_vtg_t *pack)
 {
-    NMEA_ASSERT(buff && pack);
+    RT_ASSERT(buff && pack);
 
     rt_memset(pack, 0, sizeof(nmea_vtg_t));
 
@@ -376,7 +384,7 @@ int nmea_parse_vtg(const char *buff, int buff_sz, nmea_vtg_t *pack)
         &(pack->spn), &(pack->spn_n),
         &(pack->spk), &(pack->spk_k)))
     {
-        nmea_error("GPVTG parse error!");
+        LOG_E("GPVTG parse error!");
         return 0;
     }
 
@@ -385,7 +393,7 @@ int nmea_parse_vtg(const char *buff, int buff_sz, nmea_vtg_t *pack)
         pack->spn_n != 'N' ||
         pack->spk_k != 'K')
     {
-        nmea_error("GPVTG parse error (format error)!");
+        LOG_E("GPVTG parse error (format error)!");
         return 0;
     }
 
