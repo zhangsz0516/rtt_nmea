@@ -25,6 +25,7 @@ int dbg_printf(const char *fmt, ...)
 const char *rmc_buf = "$GPRMC,031024.000,A,3115.6422,N,12127.5490,E,0.58,98.86,180918,,,A*5A\r\n";
 const char *gga_buf = "$GPGGA,082006.000,3852.9276,N,11527.4283,E,1,08,1.0,20.6,M,,,,0000*35\r\n";
 const char *vtg_buf = "$GPVTG,0.0,T,,M,0.00,N,0.00,K,N*50\r\n";
+const char *gsa_buf = "$GPGSA,A,3,01,20,19,13,,,,,,,,,40.4,24.4,32.2*0A\r\n";
 
 void nmea_parse_test_rmc(void)
 {
@@ -57,6 +58,15 @@ void nmea_parse_test_vtg(void)
         pack.dir_t, pack.dec_m, pack.spn_n, pack.spk_k);
 }
 MSH_CMD_EXPORT(nmea_parse_test_vtg, nmea_parse_test_vtg);
+
+void nmea_parse_test_gsa(void)
+{
+    nmea_gsa_t pack = { 0 };
+
+    nmea_parse_gsa(gsa_buf, rt_strlen(gsa_buf), &pack);
+    dbg_printf("GSA : fix_mode: %c, fix_type: %d\n", pack.fix_mode, pack.fix_type);
+}
+MSH_CMD_EXPORT(nmea_parse_test_gsa, nmea_parse_test_gsa);
 
 #else
 
