@@ -10,7 +10,7 @@
       <TargetName>rt-thread</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
+      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER, __RTTHREAD__, STM32L475xx, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;..\..\rt-thread\components\libc\compilers\common;..\..\rt-thread\components\libc\compilers\common\extension;..\..\rt-thread\libcpu\arm\common;..\..\rt-thread\libcpu\arm\cortex-m4;..\..\rt-thread\components\drivers\include;..\..\rt-thread\components\drivers\include;..\..\rt-thread\components\drivers\include;board;board\CubeMX_Config\Inc;..\..\libraries\HAL_Drivers;..\..\libraries\HAL_Drivers\config;..\..\rt-thread\components\finsh;.;..\..\rt-thread\include;..\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Inc;..\..\libraries\STM32L4xx_HAL\CMSIS\Device\ST\STM32L4xx\Include;..\..\libraries\STM32L4xx_HAL\CMSIS\Include;applications\nmea;..\..\rt-thread\components\libc\posix\io\poll;..\..\rt-thread\components\libc\posix\ipc;..\..\rt-thread\examples\utest\testcases\kernel</IncludePath>
+              <IncludePath>applications;..\..\rt-thread\components\libc\compilers\common;..\..\rt-thread\components\libc\compilers\common\extension;..\..\rt-thread\libcpu\arm\common;..\..\rt-thread\libcpu\arm\cortex-m4;..\..\rt-thread\components\drivers\include;..\..\rt-thread\components\drivers\include;..\..\rt-thread\components\drivers\include;board;board\CubeMX_Config\Inc;..\..\libraries\HAL_Drivers;..\..\libraries\HAL_Drivers\config;..\..\rt-thread\components\finsh;.;..\..\rt-thread\include;..\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Inc;..\..\libraries\STM32L4xx_HAL\CMSIS\Device\ST\STM32L4xx\Include;..\..\libraries\STM32L4xx_HAL\CMSIS\Include;applications\nmea;..\..\rt-thread\components\libc\posix\io\poll;..\..\rt-thread\components\libc\posix\io\stdio;..\..\rt-thread\components\libc\posix\ipc;..\..\rt-thread\examples\utest\testcases\kernel</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -394,29 +394,24 @@
           <GroupName>Compiler</GroupName>
           <Files>
             <File>
-              <FileName>syscalls.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\rt-thread\components\libc\compilers\armlibc\syscalls.c</FilePath>
-            </File>
-            <File>
-              <FileName>libc_syms.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\rt-thread\components\libc\compilers\armlibc\libc_syms.c</FilePath>
-            </File>
-            <File>
               <FileName>syscall_mem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\rt-thread\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
             </File>
             <File>
-              <FileName>time.c</FileName>
+              <FileName>syscalls.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\rt-thread\components\libc\compilers\common\time.c</FilePath>
+              <FilePath>..\..\rt-thread\components\libc\compilers\armlibc\syscalls.c</FilePath>
             </File>
             <File>
               <FileName>stdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\rt-thread\components\libc\compilers\common\stdlib.c</FilePath>
+            </File>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\rt-thread\components\libc\compilers\common\time.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -454,6 +449,41 @@
           <GroupName>DeviceDrivers</GroupName>
           <Files>
             <File>
+              <FileName>completion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\rt-thread\components\drivers\ipc\completion.c</FilePath>
+            </File>
+            <File>
+              <FileName>ringbuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\rt-thread\components\drivers\ipc\ringbuffer.c</FilePath>
+            </File>
+            <File>
+              <FileName>waitqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\rt-thread\components\drivers\ipc\waitqueue.c</FilePath>
+            </File>
+            <File>
+              <FileName>ringblk_buf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\rt-thread\components\drivers\ipc\ringblk_buf.c</FilePath>
+            </File>
+            <File>
+              <FileName>workqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\rt-thread\components\drivers\ipc\workqueue.c</FilePath>
+            </File>
+            <File>
+              <FileName>dataqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\rt-thread\components\drivers\ipc\dataqueue.c</FilePath>
+            </File>
+            <File>
+              <FileName>pipe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\rt-thread\components\drivers\ipc\pipe.c</FilePath>
+            </File>
+            <File>
               <FileName>pin.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\rt-thread\components\drivers\misc\pin.c</FilePath>
@@ -463,46 +493,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\rt-thread\components\drivers\serial\serial.c</FilePath>
             </File>
-            <File>
-              <FileName>dataqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\rt-thread\components\drivers\src\dataqueue.c</FilePath>
-            </File>
-            <File>
-              <FileName>ringblk_buf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\rt-thread\components\drivers\src\ringblk_buf.c</FilePath>
-            </File>
-            <File>
-              <FileName>completion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\rt-thread\components\drivers\src\completion.c</FilePath>
-            </File>
-            <File>
-              <FileName>ringbuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\rt-thread\components\drivers\src\ringbuffer.c</FilePath>
-            </File>
-            <File>
-              <FileName>workqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\rt-thread\components\drivers\src\workqueue.c</FilePath>
-            </File>
-            <File>
-              <FileName>pipe.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\rt-thread\components\drivers\src\pipe.c</FilePath>
-            </File>
-            <File>
-              <FileName>waitqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\rt-thread\components\drivers\src\waitqueue.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>Drivers</GroupName>
           <Files>
+            <File>
+              <FileName>startup_stm32l475xx.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libraries\STM32L4xx_HAL\CMSIS\Device\ST\STM32L4xx\Source\Templates\arm\startup_stm32l475xx.s</FilePath>
+            </File>
             <File>
               <FileName>stm32l4xx_hal_msp.c</FileName>
               <FileType>1</FileType>
@@ -512,11 +512,6 @@
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\board.c</FilePath>
-            </File>
-            <File>
-              <FileName>startup_stm32l475xx.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libraries\STM32L4xx_HAL\CMSIS\Device\ST\STM32L4xx\Source\Templates\arm\startup_stm32l475xx.s</FilePath>
             </File>
             <File>
               <FileName>drv_gpio.c</FileName>
@@ -559,9 +554,24 @@
           <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>object.c</FileName>
+              <FileName>device.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\rt-thread\src\object.c</FilePath>
+              <FilePath>..\..\rt-thread\src\device.c</FilePath>
+            </File>
+            <File>
+              <FileName>kservice.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\rt-thread\src\kservice.c</FilePath>
+            </File>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\rt-thread\src\timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>idle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\rt-thread\src\idle.c</FilePath>
             </File>
             <File>
               <FileName>ipc.c</FileName>
@@ -569,9 +579,19 @@
               <FilePath>..\..\rt-thread\src\ipc.c</FilePath>
             </File>
             <File>
-              <FileName>kservice.c</FileName>
+              <FileName>mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\rt-thread\src\kservice.c</FilePath>
+              <FilePath>..\..\rt-thread\src\mem.c</FilePath>
+            </File>
+            <File>
+              <FileName>mempool.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\rt-thread\src\mempool.c</FilePath>
+            </File>
+            <File>
+              <FileName>object.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\rt-thread\src\object.c</FilePath>
             </File>
             <File>
               <FileName>irq.c</FileName>
@@ -584,44 +604,19 @@
               <FilePath>..\..\rt-thread\src\scheduler.c</FilePath>
             </File>
             <File>
-              <FileName>thread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\rt-thread\src\thread.c</FilePath>
-            </File>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\rt-thread\src\device.c</FilePath>
-            </File>
-            <File>
               <FileName>clock.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\rt-thread\src\clock.c</FilePath>
             </File>
             <File>
-              <FileName>timer.c</FileName>
+              <FileName>thread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\rt-thread\src\timer.c</FilePath>
-            </File>
-            <File>
-              <FileName>mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\rt-thread\src\mem.c</FilePath>
+              <FilePath>..\..\rt-thread\src\thread.c</FilePath>
             </File>
             <File>
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\rt-thread\src\components.c</FilePath>
-            </File>
-            <File>
-              <FileName>mempool.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\rt-thread\src\mempool.c</FilePath>
-            </File>
-            <File>
-              <FileName>idle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\rt-thread\src\idle.c</FilePath>
             </File>
           </Files>
         </Group>
