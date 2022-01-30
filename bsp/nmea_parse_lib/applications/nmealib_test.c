@@ -24,6 +24,7 @@ int dbg_printf(const char *fmt, ...)
 #include <nmea_parse.h>
 const char *rmc_buf = "$GPRMC,031024.000,A,3115.6422,N,12127.5490,E,0.58,98.86,180918,,,A*5A\r\n";
 const char *gga_buf = "$GPGGA,082006.000,3852.9276,N,11527.4283,E,1,08,1.0,20.6,M,,,,0000*35\r\n";
+const char *vtg_buf = "$GPVTG,0.0,T,,M,0.00,N,0.00,K,N*50\r\n";
 
 void nmea_parse_test_rmc(void)
 {
@@ -44,6 +45,18 @@ void nmea_parse_test_gga(void)
         pack.lon, pack.ew, pack.sig);
 }
 MSH_CMD_EXPORT(nmea_parse_test_gga, nmea_parse_test_gga);
+
+void nmea_parse_test_vtg(void)
+{
+    nmea_vtg_t pack = { 0 };
+
+    nmea_parse_vtg(vtg_buf, rt_strlen(vtg_buf), &pack);
+    dbg_printf("VTG : dir: %lf, Magnetic: %lf, speed knots: %lf, speed kilometers: %lf,\n",
+        pack.dir, pack.dec, pack.spn, pack.spk);
+    dbg_printf("VTG : degrees True: %c, degrees Magnetic: %c, speed_knots: %c, speed_km_per_h: %c,\n",
+        pack.dir_t, pack.dec_m, pack.spn_n, pack.spk_k);
+}
+MSH_CMD_EXPORT(nmea_parse_test_vtg, nmea_parse_test_vtg);
 
 #else
 
